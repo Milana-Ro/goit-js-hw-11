@@ -4,7 +4,12 @@ import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { searchImagesApi } from './js/pixabay-api';
-import { clearGallery, renderGallery } from './js/render-functions';
+import {
+  clearGallery,
+  renderGallery,
+  showLoader,
+  hideLoader,
+} from './js/render-functions';
 
 const form = document.querySelector('.form');
 
@@ -17,20 +22,53 @@ function onSubmitForm(event) {
   const imageName = new FormData(form).get('imageName').trim();
 
   if (!imageName) {
-    return alert('fill the input');
+    showRequiredFillNotification();
+    return;
   }
+  showLoader();
   searchImagesApi(imageName)
     .then(data => {
       const { hits, total } = data;
       if (!hits.length || !total) {
-        // izitoast
-        return console.log(
-          'Sorry, there are no images matching your search query. Please try again!'
-        );
+        showNotFoundNotification();
+        return;
       }
       renderGallery(hits);
     })
-    //izitoast
-    .catch(error => console.error(error.toString()));
+    .catch(error => showErrorNotification(error))
+    .finally(() => hideLoader());
   form.reset();
+}
+
+function showErrorNotification(message) {
+  iziToast.error({
+    title: 'Error',
+    message: `${message.toString()}`,
+    position: 'topRight',
+    messageColor: '#fff',
+    messageLineHeight: '150%',
+    backgroundColor: 'red',
+  });
+}
+
+function showNotFoundNotification() {
+  iziToast.error({
+    message:
+      'Sorry, there are no images matching your search query. Please try again!',
+    position: 'topRight',
+    messageColor: '#fff',
+    messageLineHeight: '150%',
+    backgroundColor: 'red',
+  });
+}
+
+function showRequiredFillNotification() {
+  iziToast.warning({
+    title: 'Caution',
+    message: 'Please fill the input',
+    position: 'topRight',
+    messageColor: '#fff',
+    messageLineHeight: '150%',
+    backgroundColor: 'orange',
+  });
 }

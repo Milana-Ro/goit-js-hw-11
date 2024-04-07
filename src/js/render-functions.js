@@ -56,8 +56,9 @@ const showImageOnClick = () => {
   gallery.refresh();
 };
 
-export const renderLoader = () => {
-  loader.classList.toggle();
+export const showLoader = () => {
+  loader.classList.remove('hide');
 };
-
-export const clearLoader = () => {};
+export const hideLoader = () => {
+  loader.classList.add('hide');
+};
