@@ -20,6 +20,8 @@ export const renderGallery = imagesList => {
           <a class="gallery-link" href="${largeImageURL}">
             <img
               class="gallery-image"
+              width="360"
+              height="200"
               loading="lazy"
               src="${webformatURL}"
               alt="${tags}"
